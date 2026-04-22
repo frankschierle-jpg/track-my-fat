@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Track My Fat">
+<meta name="theme-color" content="#080808">
+<title>Track My Fat 🔥</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080808; --bg2:#101010; --bg3:#181818; --bg4:#222;
+  --red:#e8380d; --red2:#ff6240;
+  --green:#2ecc71; --yellow:#f5c518; --blue:#4fc3f7;
+  --text:#f0ece4; --text2:#b0a898; --muted:#606060;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --card:rgba(255,255,255,0.03);
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;font-size:16px}
+button{font-family:'Barlow',sans-serif;cursor:pointer;border:none;background:none}
+input,select{font-family:'IBM Plex Mono',monospace;outline:none;color:var(--text)}
+::-webkit-scrollbar{display:none}
+
+.scr{display:none;min-height:100vh}
+.scr.on{display:block}
+#scr-home.on,#scr-add.on{display:flex;flex-direction:column}
+
+/* HOME */
+.hdr{padding:52px 20px 18px;background:linear-gradient(180deg,#0e0e0e,var(--bg));border-bottom:1px solid var(--border);position:relative}
+.hdr::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red),var(--red2),transparent);opacity:0.5}
+.hdr-row{display:flex;align-items:center;gap:14px}
+.wordmark .title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.8rem;letter-spacing:0.05em;line-height:0.9;text-transform:uppercase;color:var(--text)}
+.wordmark .title span{color:var(--red)}
+.wordmark .sub{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:5px;border-left:2px solid var(--red);padding-left:8px}
+.hdr-date{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--text2);margin-top:13px;letter-spacing:0.06em}
+
+.ulist{padding:14px 16px 8px;flex:1;display:flex;flex-direction:column;gap:10px}
+
+.ucard{border-radius:6px;border:1px solid var(--border);border-left:4px solid var(--muted);background:var(--bg2);overflow:hidden}
+.ucard.ok{border-left-color:var(--green)}
+.ucard.nope{border-left-color:var(--red);background:rgba(232,56,13,0.04)}
+.ucard-main{display:flex;justify-content:space-between;min-height:84px;cursor:pointer}
+.ucard-l{padding:14px 15px;flex:1}
+.ucard-n{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.8rem;letter-spacing:0.04em;text-transform:uppercase;line-height:1}
+.ucard-m{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--text2);margin-top:6px;line-height:1.7}
+.nope-badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;background:rgba(232,56,13,0.12);border-radius:4px;border:1px solid rgba(232,56,13,0.3)}
+.nope-txt{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--red);letter-spacing:0.05em;line-height:1.5}
+.ucard-r{padding:14px 15px;background:rgba(0,0,0,0.2);border-left:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;align-items:flex-end;min-width:115px}
+.ucard-w{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;line-height:1}
+.ucard-w .u{font-size:1.1rem;font-weight:400;opacity:0.4}
+.ucard-w.none{font-size:0.95rem;font-weight:700;color:var(--red);line-height:1.35;text-align:right}
+.ucard-d{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;margin-top:4px}
+.ucard-d.g{color:var(--green)}
+.ucard-d.b{color:var(--red)}
+
+.qrow{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:rgba(0,0,0,0.1)}
+.qi{flex:1;padding:9px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:0.95rem}
+.qbtn{padding:9px 16px;background:var(--red);border-radius:6px;color:#fff;font-weight:700;font-size:0.85rem;letter-spacing:0.04em}
+
+.krow{display:flex;gap:6px;padding:8px 14px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.klbl{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.08em;margin-right:2px}
+.kbtn{padding:6px 11px;border-radius:5px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text2);font-size:0.8rem;font-weight:500;transition:all 0.15s}
+.kbtn:active{background:rgba(245,197,24,0.15);border-color:var(--yellow);color:var(--yellow)}
+
+.hactions{padding:12px 16px 30px;display:flex;gap:8px}
+.btn-add{flex:1;padding:13px;border-radius:6px;border:1px dashed rgba(255,255,255,0.14);color:var(--muted);font-size:0.9rem;font-weight:600}
+.btn-chart{flex:1;padding:13px;border-radius:6px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:0.9rem;font-weight:600}
+
+/* USER DETAIL */
+.uhero{padding:52px 20px 20px;background:linear-gradient(180deg,#111,var(--bg));border-bottom:1px solid var(--border)}
+.back{padding:7px 14px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:0.82rem;margin-bottom:14px}
+.uname{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.2rem;letter-spacing:0.04em;text-transform:uppercase;line-height:1}
+.hstats{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.hs{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 12px;flex:1;min-width:70px}
+.hs-l{font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.hs-v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.4rem;line-height:1.2;margin-top:2px}
+
+.ubody{padding:15px 18px 50px}
+.stitle{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;margin:20px 0 10px;padding-left:2px}
+
+.wi-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:15px}
+.wi-l{font-size:0.85rem;color:var(--text2);margin-bottom:10px}
+.wi-row{display:flex;gap:8px}
+.wi-i{flex:1;padding:12px 13px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:1.1rem}
+.wi-b{padding:12px 18px;background:var(--red);border-radius:6px;color:#fff;font-weight:700;font-size:0.95rem}
+
+.pbar-wrap{margin-top:12px}
+.pbar-lbls{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--text2);margin-bottom:5px}
+.pbar{height:6px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--red2));transition:width 0.6s}
+
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:11px 15px;border-bottom:1px solid var(--border);font-size:0.88rem}
+.crow:last-child{border-bottom:none;background:rgba(232,56,13,0.06)}
+.cl{color:var(--text2)}
+.cv{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--text)}
+.crow:last-child .cl{font-weight:700;color:var(--red);font-size:0.92rem}
+.crow:last-child .cv{font-weight:700;color:var(--red);font-size:0.95rem}
+
+.rcard{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border)}
+.rrow:last-child{border-bottom:none}
+.rt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.8rem;color:var(--red);line-height:1}
+.rl{font-size:0.8rem;color:var(--text2);margin-top:2px}
+.tog{width:48px;height:28px;border-radius:14px;background:rgba(255,255,255,0.1);border:1px solid var(--border);position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
+.tog.on{background:var(--green);border-color:var(--green)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+.tog.on::after{transform:translateX(20px)}
+
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.ld{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--text2)}
+.lkg{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.5rem;line-height:1}
+.ldiff{font-family:'IBM Plex Mono',monospace;font-size:0.68rem}
+
+/* CHART */
+#scr-chart{padding:52px 18px 80px;background:var(--bg)}
+.chdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.ctitle{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.4rem;letter-spacing:0.05em;text-transform:uppercase}
+.bback{padding:8px 16px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:0.82rem;font-weight:500}
+.frow{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:3px}
+.fb{padding:7px 15px;border-radius:20px;border:1px solid var(--border);color:var(--text2);font-size:0.75rem;white-space:nowrap;font-family:'IBM Plex Mono',monospace;flex-shrink:0;transition:all 0.15s;font-weight:500}
+.fb.on{background:var(--red);border-color:var(--red);color:#fff}
+.cbox{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:12px}
+.cleg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.cli{display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text2);font-family:'IBM Plex Mono',monospace}
+.cld{width:10px;height:10px;border-radius:50%}
+svg.ch{width:100%;overflow:visible}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc2{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.sc2-l{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.sc2-v{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:2rem;line-height:1}
+.sc2-s{font-size:0.75rem;color:var(--text2);margin-top:2px}
+
+/* ADD USER */
+#scr-add{padding:52px 20px 80px;background:var(--bg)}
+.atitle{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.6rem;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:5px}
+.asub{font-size:0.88rem;color:var(--text2);margin-bottom:22px;line-height:1.6}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--text2);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px;font-weight:500}
+.fi{width:100%;padding:12px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;font-size:0.95rem;color:var(--text);transition:border-color 0.15s}
+.fi:focus{border-color:rgba(232,56,13,0.5)}
+select.fi option{background:#1a1a1a;color:var(--text)}
+.fgrow{display:flex;gap:10px}
+.fgrow .fg{flex:1}
+.fhint{font-size:0.7rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.cprev{background:rgba(232,56,13,0.06);border:1px solid rgba(232,56,13,0.2);border-radius:8px;padding:13px 15px;margin:14px 0;font-size:0.8rem;line-height:2.3;font-family:'IBM Plex Mono',monospace;color:var(--text2);display:none}
+.cprev span{color:var(--red2);font-weight:600}
+.bp{width:100%;padding:15px;background:var(--red);border-radius:6px;color:#fff;font-size:1rem;font-weight:700;margin-bottom:10px;letter-spacing:0.04em;font-family:'Barlow',sans-serif}
+.bs{width:100%;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:0.9rem;font-weight:500;font-family:'Barlow',sans-serif}
+
+/* NOTIFICATIONS */
+#nwrap{position:fixed;top:0;left:0;right:0;z-index:9995;display:flex;flex-direction:column}
+.notif{padding:14px 20px 14px 16px;border-bottom:2px solid var(--red);display:flex;align-items:flex-start;gap:12px;animation:sdn 0.35s ease;position:relative}
+@keyframes sdn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.notif.base{background:linear-gradient(135deg,#1a0500,#2a0a00)}
+.notif.mile{background:linear-gradient(135deg,#0a1500,#152500);border-bottom-color:var(--green)}
+.notif.kudo{background:linear-gradient(135deg,#150d00,#251800);border-bottom-color:var(--yellow)}
+.ni{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+.nb{flex:1}
+.nt{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:0.06em;color:var(--red);text-transform:uppercase}
+.notif.mile .nt{color:var(--green)}
+.notif.kudo .nt{color:var(--yellow)}
+.nm{font-size:0.82rem;color:var(--text2);margin-top:3px;line-height:1.5}
+.nx{color:var(--muted);font-size:1.1rem;cursor:pointer;padding:2px 5px;flex-shrink:0}
+
+.empty{text-align:center;color:var(--muted);padding:40px 0;font-size:0.9rem;line-height:2.2}
+.del-btn{width:100%;margin-top:20px;padding:12px;border-radius:6px;background:rgba(232,56,13,0.08);border:1px solid rgba(232,56,13,0.2);color:var(--red);font-size:0.9rem;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="nwrap"></div>
+
+<!-- HOME -->
+<div id="scr-home" class="scr on">
+  <div class="hdr">
+    <div class="hdr-row">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <rect width="56" height="56" rx="8" fill="#0e0e0e"/>
+        <rect x="5" y="16" width="9" height="29" rx="2" fill="#e8380d" opacity="0.22"/>
+        <rect x="16.5" y="22" width="9" height="23" rx="2" fill="#e8380d" opacity="0.45"/>
+        <rect x="28" y="28" width="9" height="17" rx="2" fill="#e8380d" opacity="0.72"/>
+        <rect x="39.5" y="33" width="9" height="12" rx="2" fill="#e8380d"/>
+        <polyline points="9.5,16 21,22 32.5,28 44,33" stroke="#f5c518" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="44,33 51,45 37,45" fill="#f5c518"/>
+        <text x="28" y="13" text-anchor="middle" fill="#e8380d" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10.5" letter-spacing="1.5">TMF</text>
+      </svg>
+      <div class="wordmark">
+        <div class="title">TRACK MY <span>FAT</span></div>
+        <div class="sub">No excuses. Just numbers.</div>
+      </div>
+    </div>
+    <div class="hdr-date" id="hdr-date"></div>
+  </div>
+  <div class="ulist" id="ulist"></div>
+  <div class="hactions">
+    <button class="btn-add" onclick="showAdd()">＋ Add User</button>
+    <button class="btn-chart" onclick="showChart()">📊 Progress</button>
+  </div>
+</div>
+
+<!-- USER DETAIL -->
+<div id="scr-user" class="scr">
+  <div class="uhero">
+    <button class="back" onclick="showHome()">◀ Back</button>
+    <div class="uname" id="uname">—</div>
+    <div class="hstats" id="hstats"></div>
+  </div>
+  <div class="ubody">
+    <div class="stitle">Today's Weight</div>
+    <div class="wi-card">
+      <div class="wi-l">Enter your weight for today</div>
+      <div class="wi-row">
+        <input class="wi-i" type="number" step="0.1" id="wii" placeholder="e.g. 82.4">
+        <button class="wi-b" onclick="saveWeight()">💾 Save</button>
+      </div>
+      <div id="uprog"></div>
+    </div>
+    <div class="stitle">Daily Calorie Budget</div>
+    <div class="ccard" id="ucals"></div>
+    <div class="stitle">Reminders</div>
+    <div class="rcard" id="urems"></div>
+    <div class="stitle">Weight Log</div>
+    <div id="ulog"></div>
+    <button class="del-btn" id="delbtn">🗑 Delete User</button>
+  </div>
+</div>
+
+<!-- CHART -->
+<div id="scr-chart" class="scr">
+  <div class="chdr">
+    <div class="ctitle">Progress</div>
+    <button class="bback" onclick="showHome()">◀ Back</button>
+  </div>
+  <div class="frow" id="cfilt"></div>
+  <div class="sgrid" id="cstats"></div>
+  <div class="cbox">
+    <div class="cleg" id="cleg"></div>
+    <svg class="ch" id="mainchart" viewBox="0 0 340 170"></svg>
+  </div>
+</div>
+
+<!-- ADD USER -->
+<div id="scr-add" class="scr">
+  <div class="atitle">New User</div>
+  <div class="asub">Fill in your details — we calculate your personal calorie budget automatically.</div>
+  <div class="fg"><label>Full Name</label><input class="fi" id="fn" type="text" placeholder="e.g. Frank" oninput="calcAdd()"></div>
+  <div class="fgrow">
+    <div class="fg"><label>Age</label><input class="fi" id="fa" type="number" placeholder="35" oninput="calcAdd()"></div>
+    <div class="fg"><label>Height (cm)</label><input class="fi" id="fh" type="number" placeholder="180" oninput="calcAdd()"></div>
+  </div>
+  <div class="fgrow">
+    <div class="fg"><label>Start Weight (kg)</label><input class="fi" id="fs" type="number" step="0.1" placeholder="85" oninput="calcAdd()"></div>
+    <div class="fg"><label>Goal Weight (kg)</label><input class="fi" id="fg2" type="number" step="0.1" placeholder="75" oninput="calcAdd()"></div>
+  </div>
+  <div class="fgrow">
+    <div class="fg"><label>Weeks to Goal</label><input class="fi" id="fw" type="number" placeholder="13" oninput="calcAdd()"></div>
+    <div class="fg"><label>Gender</label><select class="fi" id="fgen" onchange="calcAdd()"><option value="m">Male</option><option value="f">Female</option></select></div>
+  </div>
+  <div class="fgrow">
+    <div class="fg"><label>Sport / Week (hrs)</label><input class="fi" id="fsp" type="number" step="0.5" placeholder="3" oninput="calcAdd()"></div>
+    <div class="fg"><label>Intensity</label><select class="fi" id="fint" onchange="calcAdd()"><option value="light">Light</option><option value="medium">Medium</option><option value="heavy">Heavy</option></select></div>
+  </div>
+  <div class="fg">
+    <label>Avg Steps / Day</label>
+    <input class="fi" id="fst" type="number" placeholder="8000" oninput="calcAdd()">
+    <div class="fhint">Steps contribute ~0.04 kcal per step</div>
+  </div>
+  <div class="cprev" id="cprev"></div>
+  <button class="bp" onclick="createUser()">Create Profile</button>
+  <button class="bs" onclick="showHome()">Cancel</button>
+</div>
+
+<script>
+const LS={
+  get:(k,fb)=>{try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):fb;}catch{return fb;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+
+let uid=null,cfilter='all';
+
+// Utils
+const todayK=()=>{const d=new Date();return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;};
+const fmtDate=ts=>{const d=new Date(ts);return`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;};
+
+// Users
+const getUsers=()=>LS.get('tmf_u',[]);
+const saveUsers=u=>LS.set('tmf_u',u);
+const getUser=id=>getUsers().find(u=>u.id===id)||null;
+
+// Calorie math
+function bmr(u){
+  const kg=u.curKg||u.sKg;
+  return u.gen==='m'?Math.round(10*kg+6.25*u.h-5*u.age+5):Math.round(10*kg+6.25*u.h-5*u.age-161);
+}
+function sportKcal(u){
+  const met={light:4,medium:6,heavy:9}[u.int]||5;
+  return Math.round(met*(u.curKg||u.sKg)*(u.sport||0)/7);
+}
+function stepKcal(u){return Math.round((u.steps||0)*0.04*(u.curKg||u.sKg)/70);}
+function tdee(u){return bmr(u)+sportKcal(u)+stepKcal(u);}
+function deficit(u){return Math.round((u.sKg-u.gKg)*7700/((u.weeks||13)*7));}
+function budget(u){return Math.max(1200,tdee(u)-deficit(u));}
+function targetW(u,ts){
+  const days=Math.max(0,Math.round((new Date(ts)-new Date(u.created))/86400000));
+  const total=(u.weeks||13)*7;
+  return parseFloat((u.sKg-(u.sKg-u.gKg)*Math.min(1,days/total)).toFixed(2));
+}
+
+// Log
+const getLog=id=>LS.get(`tmf_l_${id}`,[]);
+const saveLog=(id,l)=>LS.set(`tmf_l_${id}`,l);
+const todayW=id=>{const e=getLog(id).find(x=>x.date===todayK());return e?e.w:null;};
+const hasToday=id=>todayW(id)!==null;
+
+function logW(id,val){
+  const log=getLog(id).filter(x=>x.date!==todayK());
+  log.push({date:todayK(),w:val,ts:Date.now()});
+  log.sort((a,b)=>a.ts-b.ts);
+  saveLog(id,log);
+  const us=getUsers();const u=us.find(x=>x.id===id);
+  if(u){u.curKg=val;saveUsers(us);}
+  checkMilestone(id,val);
+}
+
+// Milestones
+const MPCTS=[10,20,30,40,50,60,70,80,90,100];
+function checkMilestone(id,newW){
+  const u=getUser(id);if(!u)return;
+  const total=u.sKg-u.gKg;if(total<=0)return;
+  const lost=u.sKg-newW;
+  const pct=Math.round((lost/total)*100);
+  const reached=MPCTS.filter(m=>pct>=m);
+  if(!reached.length)return;
+  const last=LS.get(`tmf_mile_${id}`,0);
+  const nM=Math.max(...reached);
+  if(nM>last){
+    LS.set(`tmf_mile_${id}`,nM);
+    notif('mile',`🏆 ${nM}% MILESTONE!`,`${u.name} just hit ${nM}% of their goal! ${Math.max(0,lost).toFixed(1)}kg down — keep pushing! 💪`);
+  }
+}
+
+// Kudos
+function sendKudos(fromId,toId,emoji){
+  const from=getUser(fromId),to=getUser(toId);
+  if(!from||!to)return;
+  const msgs={'🔥':`${from.name} sends 🔥 fire to ${to.name}!`,'💪':`${from.name} flexes 💪 for ${to.name}!`,'👑':`${from.name} crowns ${to.name} 👑 — legend!`};
+  notif('kudo',`KUDOS FROM ${from.name.toUpperCase()}!`,msgs[emoji]||`${from.name} sends ${emoji} to ${to.name}!`);
+  const k=LS.get(`tmf_kudo_${toId}`,{});k[emoji]=(k[emoji]||0)+1;LS.set(`tmf_kudo_${toId}`,k);
+}
+
+// Notifications
+function notif(type,title,msg){
+  const wrap=document.getElementById('nwrap');
+  const d=document.createElement('div');
+  d.className=`notif ${type}`;
+  const icon=type==='mile'?'🏆':type==='kudo'?'🎉':'🔥';
+  d.innerHTML=`<div class="ni">${icon}</div><div class="nb"><div class="nt">${title}</div><div class="nm">${msg}</div></div><div class="nx" onclick="this.closest('.notif').remove()">✕</div>`;
+  wrap.appendChild(d);
+  setTimeout(()=>d.remove(),9000);
+  if('Notification' in window&&Notification.permission==='granted'){
+    try{new Notification(`🔥 ${title}`,{body:msg,tag:`tmf-${Date.now()}`});}catch{}
+  }
+}
+
+// Reminders
+const RSLOTS=[{k:'r1',h:7,m:0,l:'Morning check-in'},{k:'r2',h:7,m:30,l:'Morning follow-up'},{k:'r3',h:17,m:30,l:'Evening check-in'},{k:'r4',h:18,m:30,l:'Evening follow-up'}];
+function checkRem(){
+  const now=new Date(),h=now.getHours(),m=now.getMinutes();
+  getUsers().forEach(u=>{
+    if(hasToday(u.id))return;
+    const rem=LS.get(`tmf_rem_${u.id}`,{r1:true,r2:true,r3:true,r4:true});
+    RSLOTS.forEach(s=>{
+      if(!rem[s.k])return;
+      if(h===s.h&&m===s.m){
+        const sk=`tmf_sh_${u.id}_${s.k}_${todayK()}`;
+        if(!LS.get(sk,false)){LS.set(sk,true);notif('base',`TRACK MY FAT — ${u.name.toUpperCase()}!`,`${s.l}: You haven't logged your weight today. Bad tracker — gets fatter.`);}
+      }
+    });
+  });
+}
+
+// Screens
+function sc(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+function showHome(){uid=null;sc('scr-home');renderHome();}
+function showAdd(){sc('scr-add');calcAdd();}
+function showUser(id){uid=id;sc('scr-user');renderUser();}
+function showChart(){sc('scr-chart');renderChart();}
+
+// Home
+function renderHome(){
+  document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  const users=getUsers();
+  const el=document.getElementById('ulist');
+  if(!users.length){el.innerHTML=`<div class="empty">🔥 No users yet.<br>Add your first user below.</div>`;return;}
+  el.innerHTML=users.map(u=>{
+    const log=getLog(u.id),tw=todayW(u.id),tracked=tw!==null;
+    const lat=log.length?log[log.length-1]:null;
+    const cur=tw??lat?.w??u.sKg;
+    const diff=parseFloat((cur-u.sKg).toFixed(1));
+    const bud=budget(u);
+    const kudos=LS.get(`tmf_kudo_${u.id}`,{});
+    const ks=Object.entries(kudos).map(([e,c])=>`${e}×${c}`).join(' ');
+    const others=users.filter(x=>x.id!==u.id);
+    return`<div class="ucard ${tracked?'ok':'nope'}">
+      <div class="ucard-main" onclick="showUser('${u.id}')">
+        <div class="ucard-l">
+          <div class="ucard-n">${u.name}</div>
+          <div class="ucard-m">🎯 ${u.gKg}kg goal &nbsp;·&nbsp; 🔥 ${bud} kcal/day &nbsp;·&nbsp; ⏱ ${u.weeks}w${ks?`<br>Kudos: ${ks}`:''}
+          </div>
+          ${!tracked?`<div class="nope-badge"><span style="font-size:1rem">🔥</span><div class="nope-txt">Bad tracker —<br>gets fatter.</div></div>`:''}
+        </div>
+        <div class="ucard-r">
+          ${tracked?`<div class="ucard-w">${cur}<span class="u"> kg</span></div><div class="ucard-d ${diff<=0?'g':'b'}">${diff>0?'+':''}${diff} kg</div>`
+          :`<div class="ucard-w none">NOT<br>TRACKED<br>TODAY</div>`}
+        </div>
+      </div>
+      <div class="qrow" onclick="event.stopPropagation()">
+        <input class="qi" type="number" step="0.1" id="qi${u.id}" placeholder="Quick log weight…" onkeydown="if(event.key==='Enter')ql('${u.id}')">
+        <button class="qbtn" onclick="ql('${u.id}')">💾 Log</button>
+      </div>
+      ${others.length?`<div class="krow" onclick="event.stopPropagation()">
+        <span class="klbl">Kudos:</span>
+        ${others.map(o=>`<button class="kbtn" onclick="sendKudos('${o.id}','${u.id}','🔥')">🔥 ${o.name}</button>
+        <button class="kbtn" onclick="sendKudos('${o.id}','${u.id}','💪')">💪</button>
+        <button class="kbtn" onclick="sendKudos('${o.id}','${u.id}','👑')">👑</button>`).join('')}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function ql(id){
+  const inp=document.getElementById(`qi${id}`);
+  if(!inp?.value)return;
+  const v=parseFloat(inp.value);if(isNaN(v))return;
+  logW(id,v);inp.value='';renderHome();
+}
+
+// User detail
+function renderUser(){
+  const u=getUser(uid);if(!u)return;
+  document.getElementById('uname').textContent=u.name.toUpperCase();
+  document.getElementById('delbtn').onclick=()=>delUser(u.id);
+  const log=getLog(uid),tw=todayW(uid);
+  const cur=tw??u.curKg??u.sKg;
+  const lost=parseFloat((u.sKg-cur).toFixed(1));
+  const toGo=parseFloat((cur-u.gKg).toFixed(1));
+  const pct=Math.max(0,Math.min(100,Math.round((Math.max(0,lost)/(u.sKg-u.gKg||1))*100)));
+  document.getElementById('hstats').innerHTML=`
+    <div class="hs"><div class="hs-l">Start</div><div class="hs-v">${u.sKg} kg</div></div>
+    <div class="hs"><div class="hs-l">Now</div><div class="hs-v" style="color:${lost>=0?'var(--green)':'var(--red)'}">${cur} kg</div></div>
+    <div class="hs"><div class="hs-l">Lost</div><div class="hs-v" style="color:var(--green)">−${Math.max(0,lost)} kg</div></div>
+    <div class="hs"><div class="hs-l">To Go</div><div class="hs-v">${Math.max(0,toGo)} kg</div></div>
+    <div class="hs"><div class="hs-l">Budget</div><div class="hs-v" style="color:var(--red)">${budget(u)}</div></div>
+  `;
+  document.getElementById('wii').value='';
+  document.getElementById('uprog').innerHTML=`<div class="pbar-wrap">
+    <div class="pbar-lbls"><span>Start: ${u.sKg} kg</span><span style="color:var(--red)">${pct}%</span><span>Goal: ${u.gKg} kg</span></div>
+    <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div></div>`;
+  const b=bmr(u),sp=sportKcal(u),st=stepKcal(u),td=b+sp+st,df=deficit(u),bud=budget(u);
+  document.getElementById('ucals').innerHTML=`
+    <div class="crow"><span class="cl">Base metabolism (BMR)</span><span class="cv">${b} kcal</span></div>
+    <div class="crow"><span class="cl">Sport (${u.sport}h/w, ${u.int})</span><span class="cv">+${sp} kcal</span></div>
+    <div class="crow"><span class="cl">Steps (~${(u.steps||0).toLocaleString()}/day)</span><span class="cv">+${st} kcal</span></div>
+    <div class="crow"><span class="cl">Total daily burn (TDEE)</span><span class="cv">${td} kcal</span></div>
+    <div class="crow"><span class="cl">Deficit to reach goal</span><span class="cv">−${df} kcal/day</span></div>
+    <div class="crow"><span class="cl">🎯 Daily Calorie Budget</span><span class="cv">${bud} kcal</span></div>
+  `;
+  const rem=LS.get(`tmf_rem_${uid}`,{r1:true,r2:true,r3:true,r4:true});
+  document.getElementById('urems').innerHTML=RSLOTS.map(s=>`
+    <div class="rrow"><div><div class="rt">${String(s.h).padStart(2,'0')}:${String(s.m).padStart(2,'0')}</div><div class="rl">${s.l}</div></div>
+    <div class="tog ${rem[s.k]?'on':''}" onclick="togRem('${s.k}')"></div></div>`).join('');
+  const logEl=document.getElementById('ulog');
+  if(!log.length){logEl.innerHTML=`<div class="empty">No entries yet.</div>`;return;}
+  logEl.innerHTML=[...log].reverse().map((e,i,arr)=>{
+    const prev=arr[i+1];const d=prev?parseFloat((e.w-prev.w).toFixed(1)):null;
+    return`<div class="lrow"><div class="ld">${e.date}</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      ${d!==null?`<div class="ldiff" style="color:${d<=0?'var(--green)':'var(--red)'}">${d>0?'+':''}${d} kg</div>`:''}
+      <div class="lkg">${e.w}<span style="font-size:0.8rem;opacity:0.4"> kg</span></div>
+    </div></div>`;
+  }).join('');
+}
+
+function saveWeight(){
+  const v=parseFloat(document.getElementById('wii').value);
+  if(isNaN(v)){alert('Please enter a valid weight.');return;}
+  logW(uid,v);document.getElementById('wii').value='';renderUser();
+}
+function togRem(k){
+  const rem=LS.get(`tmf_rem_${uid}`,{r1:true,r2:true,r3:true,r4:true});
+  rem[k]=!rem[k];LS.set(`tmf_rem_${uid}`,rem);renderUser();
+}
+function delUser(id){
+  if(!confirm('Delete this user and all data?'))return;
+  saveUsers(getUsers().filter(u=>u.id!==id));
+  localStorage.removeItem(`tmf_l_${id}`);showHome();
+}
+
+// Chart
+const COLS=['#e8380d','#2ecc71','#f5c518','#4fc3f7','#ea80fc','#ff9800'];
+function renderChart(){
+  const users=getUsers();
+  const filt=cfilter==='all'?users:users.filter(u=>u.id===cfilter);
+  document.getElementById('cfilt').innerHTML=
+    `<button class="fb ${cfilter==='all'?'on':''}" onclick="setF('all')">ALL</button>`+
+    users.map(u=>`<button class="fb ${cfilter===u.id?'on':''}" onclick="setF('${u.id}')">${u.name}</button>`).join('');
+  const logs=filt.map((u,i)=>({u,c:COLS[i%COLS.length],log:getLog(u.id)})).filter(x=>x.log.length);
+  document.getElementById('cstats').innerHTML=filt.map((u,i)=>{
+    const log=getLog(u.id),cur=log.length?log[log.length-1].w:u.sKg;
+    const lost=parseFloat((u.sKg-cur).toFixed(1));
+    const pct=Math.max(0,Math.round((Math.max(0,lost)/(u.sKg-u.gKg||1))*100));
+    const c=COLS[i%COLS.length];
+    return`<div class="sc2"><div class="sc2-l" style="color:${c}">${u.name}</div>
+    <div class="sc2-v" style="color:${c}">${cur}<span style="font-size:1rem"> kg</span></div>
+    <div class="sc2-s">${lost>0?`−${lost} kg · ${pct}% done`:'No loss yet'}</div></div>`;
+  }).join('');
+  if(!logs.length){
+    document.getElementById('mainchart').innerHTML=`<text x="170" y="85" fill="#555" text-anchor="middle" font-size="14" font-family="Barlow,sans-serif">No weight data yet</text>`;
+    document.getElementById('cleg').innerHTML='';return;
+  }
+  const W=340,H=170,PT=18,PB=30,PL=36,PR=16;
+  let dates=[];logs.forEach(({log})=>log.forEach(e=>dates.push(e.date)));
+  dates=[...new Set(dates)].sort((a,b)=>{const pa=a.split('-').map(Number),pb=b.split('-').map(Number);return pa[0]-pb[0]||pa[1]-pb[1]||pa[2]-pb[2];});
+  const allW=logs.flatMap(({log,u})=>[...log.map(e=>e.w),u.gKg,u.sKg]);
+  const mn=Math.min(...allW)-1,mx=Math.max(...allW)+1;
+  const xi=i=>PL+(i/Math.max(dates.length-1,1))*(W-PL-PR);
+  const yi=v=>PT+(mx-v)/(mx-mn)*(H-PT-PB);
+  let svg='';
+  const stp=Math.ceil((mx-mn)/4);
+  for(let w=Math.ceil(mn);w<=mx;w+=stp){
+    const y=yi(w);
+    svg+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>`;
+    svg+=`<text x="${PL-4}" y="${y+4}" fill="#666" font-size="9" text-anchor="end" font-family="IBM Plex Mono,monospace">${w}</text>`;
+  }
+  [0,Math.floor(dates.length/2),dates.length-1].forEach(i=>{
+    if(!dates[i])return;
+    const p=dates[i].split('-').map(Number);const d=new Date(p[0],p[1],p[2]);
+    svg+=`<text x="${xi(i)}" y="${H-5}" fill="#666" font-size="8.5" text-anchor="middle" font-family="IBM Plex Mono,monospace">${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</text>`;
+  });
+  logs.forEach(({u,c,log})=>{
+    const tp=dates.map((d,i)=>{const p=d.split('-').map(Number);return{x:xi(i),y:yi(targetW(u,new Date(p[0],p[1],p[2])))};});
+    if(tp.length>1){let t=`M${tp[0].x},${tp[0].y}`;tp.forEach(p=>t+=` L${p.x},${p.y}`);svg+=`<path d="${t}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.3"/>`;}
+    const pts=log.map(e=>{const idx=dates.indexOf(e.date);if(idx<0)return null;return{x:xi(idx),y:yi(e.w),w:e.w};}).filter(Boolean);
+    if(pts.length>1){
+      let path=`M${pts[0].x},${pts[0].y}`;
+      for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;path+=` C${cx},${pts[i-1].y} ${cx},${pts[i].y} ${pts[i].x},${pts[i].y}`;}
+      svg+=`<path d="${path}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>`;
+    }
+    pts.forEach((p,i)=>{
+      const last=i===pts.length-1;
+      svg+=`<circle cx="${p.x}" cy="${p.y}" r="${last?5:3}" fill="${c}" stroke="${last?'#080808':'none'}" stroke-width="2"/>`;
+      if(last)svg+=`<text x="${p.x+7}" y="${p.y+4}" fill="${c}" font-size="9.5" font-weight="bold" font-family="IBM Plex Mono,monospace">${p.w}</text>`;
+    });
+  });
+  document.getElementById('mainchart').innerHTML=svg;
+  document.getElementById('cleg').innerHTML=logs.map(({u,c})=>`<div class="cli"><div class="cld" style="background:${c}"></div><span style="color:#ddd">${u.name}</span><span style="margin-left:5px;opacity:0.4;font-size:0.65rem">- - - target</span></div>`).join('');
+}
+function setF(f){cfilter=f;renderChart();}
+
+// Add user
+function calcAdd(){
+  const n=document.getElementById('fn').value.trim();
+  const a=parseFloat(document.getElementById('fa').value)||0;
+  const h=parseFloat(document.getElementById('fh').value)||0;
+  const s=parseFloat(document.getElementById('fs').value)||0;
+  const g=parseFloat(document.getElementById('fg2').value)||0;
+  const w=parseFloat(document.getElementById('fw').value)||13;
+  const gen=document.getElementById('fgen').value;
+  const sp=parseFloat(document.getElementById('fsp').value)||0;
+  const int=document.getElementById('fint').value;
+  const st=parseFloat(document.getElementById('fst').value)||0;
+  const el=document.getElementById('cprev');
+  if(!n||!a||!h||!s||!g){el.style.display='none';return;}
+  const d={age:a,h,sKg:s,gKg:g,weeks:w,gen,sport:sp,int,steps:st,curKg:s};
+  const b2=bmr(d),sp2=sportKcal(d),st2=stepKcal(d),td=b2+sp2+st2,df=deficit(d),bud=Math.max(1200,td-df);
+  el.style.display='block';
+  el.innerHTML=`BMR: <span>${b2} kcal</span>  +  Sport: <span>+${sp2}</span>  +  Steps: <span>+${st2}</span><br>TDEE: <span>${td} kcal/day</span>  →  Deficit: <span>−${df} kcal</span><br>🎯 Daily Budget: <span>${bud} kcal</span>  ·  Target: <span>${((s-g)/w).toFixed(2)} kg/week</span>`;
+}
+
+function createUser(){
+  const n=document.getElementById('fn').value.trim();
+  const a=parseFloat(document.getElementById('fa').value);
+  const h=parseFloat(document.getElementById('fh').value);
+  const s=parseFloat(document.getElementById('fs').value);
+  const g=parseFloat(document.getElementById('fg2').value);
+  const w=parseFloat(document.getElementById('fw').value)||13;
+  const gen=document.getElementById('fgen').value;
+  const sp=parseFloat(document.getElementById('fsp').value)||0;
+  const int=document.getElementById('fint').value;
+  const st=parseFloat(document.getElementById('fst').value)||0;
+  if(!n||isNaN(a)||isNaN(h)||isNaN(s)||isNaN(g)){alert('Please fill in all required fields.');return;}
+  const id='u'+Date.now();
+  const us=getUsers();
+  us.push({id,name:n,age:a,h,sKg:s,gKg:g,weeks:w,gen,sport:sp,int,steps:st,curKg:s,created:new Date().toISOString()});
+  saveUsers(us);
+  if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+  showHome();
+}
+
+window.onload=()=>{showHome();checkRem();setInterval(checkRem,60000);};
+</script>
+</body>
+</html>
