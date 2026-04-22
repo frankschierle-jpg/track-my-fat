@@ -1664,5 +1664,11 @@ window.addEventListener('appinstalled', () => {
   notif('base','App installiert! 🎉','TMF läuft jetzt als native App mit echten Push-Reminders.');
 });
 </script>
+
+  <script>
+  navigator.serviceWorker.register('/track-my-fat/sw.js', {
+    scope: '/track-my-fat/'
+  });
+</script>
 </body>
 </html>
